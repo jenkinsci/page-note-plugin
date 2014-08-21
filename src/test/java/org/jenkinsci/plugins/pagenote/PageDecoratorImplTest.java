@@ -6,15 +6,21 @@ import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.ListView;
 import hudson.model.PageDecorator;
+import hudson.model.User;
+import jenkins.model.Jenkins;
 import junit.framework.Assert;
+import org.jenkinsci.plugins.pagenote.impl.FileStorage;
+import org.jenkinsci.plugins.pagenote.impl.FileStorage.NoteImpl;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
+import org.jvnet.hudson.test.JenkinsRule.DummySecurityRealm;
 import org.jvnet.hudson.test.JenkinsRule.WebClient;
 import org.jvnet.hudson.test.TestExtension;
 
 import java.io.IOException;
+import java.util.concurrent.Callable;
 
 public class PageDecoratorImplTest extends Assert {
     @Rule
@@ -43,10 +49,10 @@ public class PageDecoratorImplTest extends Assert {
         ListView v2 = addView(foo, "v2");
 
         // the same job in different views should have the same key
-        assertEquals( pageKeyOf(wc.getPage(v1,"job/foo")), pageKeyOf(wc.getPage(v2,"job/foo")));
+        assertEquals(pageKeyOf(wc.getPage(v1, "job/foo")), pageKeyOf(wc.getPage(v2, "job/foo")));
 
         // same build under different permalinks should have the same key
-        assertEquals( pageKeyOf(wc.getPage(b2)), pageKeyOf(wc.getPage(foo,"lastSuccessfulBuild")));
+        assertEquals(pageKeyOf(wc.getPage(b2)), pageKeyOf(wc.getPage(foo, "lastSuccessfulBuild")));
     }
 
     private ListView addView(FreeStyleProject foo, String name) throws IOException {
@@ -77,5 +83,33 @@ public class PageDecoratorImplTest extends Assert {
         public String getKey() {
             return subject.key();
         }
+    }
+
+    @Test
+    public void author() throws Exception {
+        DummySecurityRealm s = j.createDummySecurityRealm();
+        j.jenkins.setSecurityRealm(s);
+        WebClient wc = j.createWebClient();
+
+        final FileStorage f = new FileStorage(j.jenkins);
+
+        wc.login("alice");
+        wc.executeOnServer(new Callable<Void>() {
+            public Void call() throws Exception {
+                NoteImpl c = f.getComment("abc");
+                c.setText("Hello world");
+                c.save();
+                return null;
+            }
+        });
+
+        wc.login("bob");
+        wc.executeOnServer(new Callable<Void>() {
+            public Void call() throws Exception {
+                NoteImpl c = f.getComment("abc");
+                assertEquals(User.get("alice"),c.getAuthor());
+                return null;
+            }
+        });
     }
 }
