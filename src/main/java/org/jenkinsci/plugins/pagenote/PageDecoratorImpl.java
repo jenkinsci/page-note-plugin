@@ -79,4 +79,8 @@ public class PageDecoratorImpl extends PageDecorator {
     }
 
     private static final Logger LOGGER = Logger.getLogger(PageDecoratorImpl.class.getName());
+
+    static {
+        Note.PERMISSIONS.toString();    // make sure permission are loaded
+    }
 }
