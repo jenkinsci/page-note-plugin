@@ -1,5 +1,6 @@
 package org.jenkinsci.plugins.pagenote;
 
+import com.google.inject.Inject;
 import hudson.Extension;
 import hudson.Util;
 import hudson.model.Item;
@@ -10,6 +11,10 @@ import org.kohsuke.stapler.Ancestor;
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
 
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  *
@@ -17,6 +22,29 @@ import org.kohsuke.stapler.StaplerRequest;
  */
 @Extension
 public class PageDecoratorImpl extends PageDecorator {
+    @Inject
+    CommentStorage storage;
+
+    /**
+     * Returns the comment for the current page.
+     *
+     * This method is for UI binding, so suppress errors if any is encountered.
+     */
+    public Comment getComment() {
+        String k = key();
+        try {
+            return storage.getComment(k);
+        } catch (IOException e) {
+            LOGGER.log(Level.WARNING, "Failed to load comment for " + k, e);
+            return new Comment() {
+                @Override
+                public void save() throws IOException {
+                    // do nothing
+                }
+            };
+        }
+    }
+
 
     /**
      * Given the current page requested, turn that into a handle that identify the page uniquely
@@ -50,5 +78,5 @@ public class PageDecoratorImpl extends PageDecorator {
         return Util.getDigestOf(StringUtils.join(tokens,'\0'));
     }
 
-
+    private static final Logger LOGGER = Logger.getLogger(PageDecoratorImpl.class.getName());
 }
