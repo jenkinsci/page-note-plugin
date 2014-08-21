@@ -4,18 +4,18 @@ import com.google.inject.Inject;
 import hudson.XmlFile;
 import hudson.util.XStream2;
 import jenkins.model.Jenkins;
-import org.jenkinsci.plugins.pagenote.Comment;
-import org.jenkinsci.plugins.pagenote.CommentStorage;
+import org.jenkinsci.plugins.pagenote.Note;
+import org.jenkinsci.plugins.pagenote.NoteStorage;
 
 import java.io.File;
 import java.io.IOException;
 
 /**
- * {@link CommentStorage} implementation backed by a directory full of files.
+ * {@link NoteStorage} implementation backed by a directory full of files.
  *
  * @author Kohsuke Kawaguchi
  */
-public class FileStorage extends CommentStorage {
+public class FileStorage extends NoteStorage {
     private final File rootDir;
 
     @Inject
@@ -24,9 +24,9 @@ public class FileStorage extends CommentStorage {
     }
 
     @Override
-    public CommentImpl getComment(String key) throws IOException {
+    public NoteImpl getComment(String key) throws IOException {
         XmlFile f = getFileFor(key);
-        CommentImpl c = new CommentImpl(this, key);
+        NoteImpl c = new NoteImpl(this, key);
         if (f.exists() && c.canRead()) {
             f.unmarshal(c);
         }
@@ -38,11 +38,11 @@ public class FileStorage extends CommentStorage {
         return new XmlFile(XSTREAM,new File(rootDir,key+".xml"));
     }
 
-    public static class CommentImpl extends Comment {
+    public static class NoteImpl extends Note {
         private transient final FileStorage storage;
         private transient final String key;
 
-        public CommentImpl(FileStorage storage, String key) {
+        public NoteImpl(FileStorage storage, String key) {
             this.storage = storage;
             this.key = key;
         }
@@ -60,6 +60,6 @@ public class FileStorage extends CommentStorage {
 
     private static final XStream2 XSTREAM = new XStream2();
     static {
-        XSTREAM.alias("comment",CommentImpl.class);
+        XSTREAM.alias("comment",NoteImpl.class);
     }
 }

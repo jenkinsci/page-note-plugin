@@ -1,6 +1,6 @@
 package org.jenkinsci.plugins.pagenote.impl;
 
-import org.jenkinsci.plugins.pagenote.impl.FileStorage.CommentImpl;
+import org.jenkinsci.plugins.pagenote.impl.FileStorage.NoteImpl;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -23,7 +23,7 @@ public class FileStorageTest extends Assert {
 
     @Test
     public void loadSave() throws Exception {
-        CommentImpl c = storage.getComment("abc");
+        NoteImpl c = storage.getComment("abc");
         c.setText("Hello world");
         c.save();
 

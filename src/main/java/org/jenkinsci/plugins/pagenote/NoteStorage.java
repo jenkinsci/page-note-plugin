@@ -9,11 +9,11 @@ import java.io.IOException;
  * @author Kohsuke Kawaguchi
  */
 @ImplementedBy(FileStorage.class)   // TODO: until the day we add impl pluggability
-public abstract class CommentStorage {
+public abstract class NoteStorage {
     /**
      * Loads the comment for the specific key.
      *
      * If the comment doesn't yet exist for the given key, an empty object will be returned.
      */
-    public abstract Comment getComment(String key) throws IOException;
+    public abstract Note getComment(String key) throws IOException;
 }

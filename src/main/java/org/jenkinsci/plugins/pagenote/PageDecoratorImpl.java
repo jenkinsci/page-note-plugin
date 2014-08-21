@@ -3,14 +3,9 @@ package org.jenkinsci.plugins.pagenote;
 import com.google.inject.Inject;
 import hudson.Extension;
 import hudson.Util;
-import hudson.model.Computer;
 import hudson.model.Item;
-import hudson.model.Messages;
 import hudson.model.PageDecorator;
 import hudson.model.Run;
-import hudson.security.Permission;
-import hudson.security.PermissionGroup;
-import hudson.security.PermissionScope;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.Ancestor;
 import org.kohsuke.stapler.Stapler;
@@ -28,20 +23,20 @@ import java.util.logging.Logger;
 @Extension
 public class PageDecoratorImpl extends PageDecorator {
     @Inject
-    CommentStorage storage;
+    NoteStorage storage;
 
     /**
      * Returns the comment for the current page.
      *
      * This method is for UI binding, so suppress errors if any is encountered.
      */
-    public Comment getComment() {
+    public Note getComment() {
         String k = key();
         try {
             return storage.getComment(k);
         } catch (IOException e) {
             LOGGER.log(Level.WARNING, "Failed to load comment for " + k, e);
-            return new Comment() {
+            return new Note() {
                 @Override
                 public void save() throws IOException {
                     // do nothing
