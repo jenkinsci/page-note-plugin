@@ -1,5 +1,6 @@
 package org.jenkinsci.plugins.pagenote;
 
+import hudson.model.User;
 import hudson.security.Permission;
 import hudson.security.PermissionGroup;
 import hudson.security.PermissionScope;
@@ -14,6 +15,7 @@ import java.io.IOException;
  */
 public abstract class Note {
     private String text;
+    private String author;
 
     public String getText() {
         if (canRead())
@@ -22,7 +24,12 @@ public abstract class Note {
             return null;
     }
 
+    public User getAuthor() {
+        return User.get(author!=null ? author : Jenkins.ANONYMOUS.getName());
+    }
+
     public void setText(String text) {
+        this.author = User.current().getId();
         this.text = text;
     }
 
@@ -40,7 +47,7 @@ public abstract class Note {
         return Jenkins.getInstance().hasPermission(READ);
     }
 
-    public static final PermissionGroup PERMISSIONS = new PermissionGroup(Note.class, Messages._Comment_Permissions_Title());
-    public static final Permission READ = new Permission(PERMISSIONS,"Read", Messages._Comment_ReadPermission_Description(), Permission.READ, PermissionScope.JENKINS);
-    public static final Permission WRITE = new Permission(PERMISSIONS,"Write", Messages._Comment_WritePermission_Description(), Jenkins.ADMINISTER, PermissionScope.JENKINS);
+    public static final PermissionGroup PERMISSIONS = new PermissionGroup(Note.class, Messages._Note_Permissions_Title());
+    public static final Permission READ = new Permission(PERMISSIONS,"Read", Messages._Note_ReadPermission_Description(), Permission.READ, PermissionScope.JENKINS);
+    public static final Permission WRITE = new Permission(PERMISSIONS,"Write", Messages._Note_WritePermission_Description(), Jenkins.ADMINISTER, PermissionScope.JENKINS);
 }
