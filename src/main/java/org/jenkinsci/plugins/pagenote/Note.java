@@ -1,6 +1,5 @@
 package org.jenkinsci.plugins.pagenote;
 
-import hudson.model.Messages;
 import hudson.security.Permission;
 import hudson.security.PermissionGroup;
 import hudson.security.PermissionScope;
@@ -38,7 +37,7 @@ public abstract class Note {
         return Jenkins.getInstance().hasPermission(READ);
     }
 
-    public static final PermissionGroup PERMISSIONS = new PermissionGroup(Note.class, Messages._Computer_Permissions_Title());
-    public static final Permission READ = new Permission(PERMISSIONS,"Read", Messages._Computer_ConfigurePermission_Description(), Permission.READ, PermissionScope.JENKINS);
-    public static final Permission WRITE = new Permission(PERMISSIONS,"Write", Messages._Computer_ExtendedReadPermission_Description(), Jenkins.ADMINISTER, PermissionScope.JENKINS);
+    public static final PermissionGroup PERMISSIONS = new PermissionGroup(Note.class, Messages._Comment_Permissions_Title());
+    public static final Permission READ = new Permission(PERMISSIONS,"Read", Messages._Comment_ReadPermission_Description(), Permission.READ, PermissionScope.JENKINS);
+    public static final Permission WRITE = new Permission(PERMISSIONS,"Write", Messages._Comment_WritePermission_Description(), Jenkins.ADMINISTER, PermissionScope.JENKINS);
 }
