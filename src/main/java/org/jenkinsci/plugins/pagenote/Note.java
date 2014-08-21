@@ -16,7 +16,10 @@ public abstract class Note {
     private String text;
 
     public String getText() {
-        return text;
+        if (canRead())
+            return text;
+        else
+            return null;
     }
 
     public void setText(String text) {

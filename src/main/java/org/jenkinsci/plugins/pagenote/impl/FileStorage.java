@@ -27,7 +27,7 @@ public class FileStorage extends NoteStorage {
     public NoteImpl getComment(String key) throws IOException {
         XmlFile f = getFileFor(key);
         NoteImpl c = new NoteImpl(this, key);
-        if (f.exists() && c.canRead()) {
+        if (f.exists()) {
             f.unmarshal(c);
         }
 
