@@ -27,7 +27,7 @@ public class FileStorage extends CommentStorage {
     public CommentImpl getComment(String key) throws IOException {
         XmlFile f = getFileFor(key);
         CommentImpl c = new CommentImpl(this, key);
-        if (f.exists()) {
+        if (f.exists() && c.canRead()) {
             f.unmarshal(c);
         }
 
@@ -49,6 +49,7 @@ public class FileStorage extends CommentStorage {
 
         @Override
         public void save() throws IOException {
+            checkWrite();
             getXmlFile().write(this);
         }
 
