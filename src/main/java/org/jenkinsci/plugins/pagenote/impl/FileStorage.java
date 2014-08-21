@@ -1,7 +1,6 @@
 package org.jenkinsci.plugins.pagenote.impl;
 
 import com.google.inject.Inject;
-import hudson.Extension;
 import hudson.XmlFile;
 import hudson.util.XStream2;
 import jenkins.model.Jenkins;
@@ -12,9 +11,10 @@ import java.io.File;
 import java.io.IOException;
 
 /**
+ * {@link CommentStorage} implementation backed by a directory full of files.
+ *
  * @author Kohsuke Kawaguchi
  */
-@Extension
 public class FileStorage extends CommentStorage {
     private final File rootDir;
 
@@ -24,7 +24,7 @@ public class FileStorage extends CommentStorage {
     }
 
     @Override
-    public Comment getComment(String key) throws IOException {
+    public CommentImpl getComment(String key) throws IOException {
         XmlFile f = getFileFor(key);
         CommentImpl c = new CommentImpl(this, key);
         if (f.exists()) {
@@ -49,7 +49,11 @@ public class FileStorage extends CommentStorage {
 
         @Override
         public void save() throws IOException {
-            storage.getFileFor(key).write(this);
+            getXmlFile().write(this);
+        }
+
+        public XmlFile getXmlFile() {
+            return storage.getFileFor(key);
         }
     }
 
