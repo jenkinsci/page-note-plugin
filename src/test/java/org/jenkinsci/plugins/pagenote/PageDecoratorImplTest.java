@@ -1,6 +1,6 @@
 package org.jenkinsci.plugins.pagenote;
 
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import org.htmlunit.html.HtmlPage;
 import com.google.inject.Inject;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
